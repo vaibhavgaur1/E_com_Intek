@@ -39,6 +39,13 @@ public class OrderDetailController {
         return orderDetailService.getOrderDetailsOfUser(authToken);
     }
 
+    @GetMapping("/getOrderDetailsOfUserByUserId/{userId}")
+    public ApiResponse<List<OrderDetail>> getOrderDetailsOfUser(
+            @PathVariable Integer userId
+    ) throws Exception {
+        return orderDetailService.getOrderDetailsOfUserByUserId(userId);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAllOrderDetailsOfAdmin/{status}")
     public ApiResponse<List<OrderDetail>> getAllOrderDetailsOfAdmin(@PathVariable String status) {
@@ -62,6 +69,19 @@ public class OrderDetailController {
     public void cancelOrder(@PathVariable Integer orderId) throws Exception {
         orderDetailService.cancelOrder(orderId);
     }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/store-orders/{storeId}")
+    public ApiResponse<List<OrderDetail>> getStoreOrders(@PathVariable Long storeId) throws Exception {
+        return orderDetailService.getStoreOrders(storeId);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/count-store-orders/{storeId}")
+    public ApiResponse<Long> countStoreOrders(@PathVariable Long storeId) throws Exception {
+        return orderDetailService.countStoreOrders(storeId);
+    }
+
     @GetMapping("/pdf/{orderId}")
     public ApiResponse<List<Object>> returnPdf(@PathVariable String orderId) throws Exception {
         return orderDetailService.getPdf(orderId);

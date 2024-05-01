@@ -27,4 +27,6 @@ public interface ProductService {
 
 
     ApiResponse<List<ProductResponse>> getAllProducts(String searchKey);
+
+    ApiResponse<Long> countProducts();
 }

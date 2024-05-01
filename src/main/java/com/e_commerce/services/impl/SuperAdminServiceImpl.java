@@ -173,4 +173,26 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         List<AdminDto> list = adminDao.findByIsActive(true).stream().map(Admin::generateDto).toList();
         return ResponseUtils.createSuccessResponse(list, new TypeReference<List<AdminDto>>() {});
     }
+
+    @Override
+    public ApiResponse<?> getAllActiveStoresCount() {
+        Long l = storeDao.countByStatusActive(true);
+        return ResponseUtils.createSuccessResponse(l, new TypeReference<Long>() { });
+    }
+
+    @Override
+    public ApiResponse<?> getAllActiveAdminsCount() {
+        Long l = storeDao.countByStatusActive(false);
+        return ResponseUtils.createSuccessResponse(l, new TypeReference<Long>() { });
+    }
+
+    @Override
+    public ApiResponse<?> getAllStoresCount() {
+        return ResponseUtils.createSuccessResponse(storeDao.count(), new TypeReference<Long>() {});
+    }
+
+    @Override
+    public ApiResponse<?> getAllAdminsCount() {
+        return ResponseUtils.createSuccessResponse(adminDao.count(), new TypeReference<Long>() {});
+    }
 }

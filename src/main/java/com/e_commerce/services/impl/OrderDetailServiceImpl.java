@@ -6,6 +6,7 @@ import com.e_commerce._util.JwtUtil;
 import com.e_commerce._util.ResponseUtils;
 import com.e_commerce.dao.*;
 import com.e_commerce.entity.*;
+import com.e_commerce.exception.RecordNotFoundException;
 import com.e_commerce.request.OrderInput;
 import com.e_commerce.response.ApiResponse;
 import com.e_commerce.services.OrderDetailService;
@@ -34,6 +35,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     private final CartDao cartDao;
     private final UserOrderDao userOrderDao;
     private final Bill billGenerator;
+    private final StoreDao storeDao;
 
 
 
@@ -43,6 +45,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         List<OrderProductQuantity> productQuantityList = orderInput.getOrderProductQuantityList();
         User dbUser = helperUtils.getUserFromAuthToken(authToken);
 //        List<OrderDetail> detailList= new ArrayList<>();
+
+        Store dbStore = storeDao.findById(orderInput.getStoreId())
+                .orElseThrow(() -> new RecordNotFoundException("store not present"));
+
+        if( !dbStore.isActive() ) {
+            throw new Exception("store is inactive currently");
+        }
 
         AtomicBoolean allGood = new AtomicBoolean(true);
         productQuantityList.forEach(productQuantity-> {
@@ -60,6 +69,15 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
         for (OrderProductQuantity orderProductQuantity : productQuantityList) {
             Product product = productDao.findById(orderProductQuantity.getProductId()).get();
+
+            if( product.getAvailableStock() < orderProductQuantity.getQuantity() ) {
+                throw new Exception("product: "+ product.getProductName()+" is not available in required stock");
+            }
+            synchronized (this){
+                //reduce the quantity for product
+                product.setAvailableStock(product.getAvailableStock()-orderProductQuantity.getQuantity());
+                productDao.save(product);
+            }
             totalProductAmount= orderProductQuantity.getQuantity() * product.getProductDiscountedPrice();
             totalAmount+= totalProductAmount;
             orderProductQuantity.setTotalProductAmount(totalProductAmount);
@@ -75,6 +93,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 .orderStatus(ORDER_PLACED)
                 .totalOrderAmount(totalAmount)
                 .user(dbUser)
+                .store(dbStore)
                 .orderDate(new Date(System.currentTimeMillis()))
                 .build();
 
@@ -99,8 +118,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
             UserOrders savedUserOrders = userOrderDao.save(userOrders);
             userOrdersList.add(savedUserOrders);
-
-
 
             List<Cart> dbListCart = cartDao.findByUser(dbUser);
             if(!isSingleProductCheckout){
@@ -190,7 +207,37 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         OrderDetail dbOrderDetail = orderDetailDao.findById(orderId)
                 .orElseThrow(() -> new Exception("order not found!!"));
 
+        // increased the quantity after cancelling the order
+        List<UserOrders> userOrders = dbOrderDetail.getUserOrders();
+        userOrders.forEach(userOrder -> {
+            Product product = userOrder.getProduct();
+            product.setAvailableStock(product.getAvailableStock()+userOrder.getQuantity());
+            productDao.save(product);
+        });
+
         dbOrderDetail.setOrderStatus("CANCELLED");
         orderDetailDao.save(dbOrderDetail);
+    }
+
+    @Override
+    public ApiResponse<List<OrderDetail>> getStoreOrders(Long storeId) {
+        List<OrderDetail> orderDetailList = orderDetailDao.findByStoreId(storeId);
+        return ResponseUtils.createSuccessResponse(orderDetailList, new TypeReference<List<OrderDetail>>() {
+        });
+    }
+
+    @Override
+    public ApiResponse<Long> countStoreOrders(Long storeId) {
+        return ResponseUtils.createSuccessResponse(orderDetailDao.countByStoreId(storeId),
+                new TypeReference<Long>() {});
+
+
+    }
+
+    @Override
+    public ApiResponse<List<OrderDetail>> getOrderDetailsOfUserByUserId(Integer userId) {
+
+        return ResponseUtils.createSuccessResponse(orderDetailDao.findByUserId(userId),
+                new TypeReference<List<OrderDetail>>() {});
     }
 }

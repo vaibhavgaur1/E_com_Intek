@@ -29,7 +29,6 @@ import java.util.Set;
 public class ProductController {
 
     private final ProductService productService;
-
 //    @PreAuthorize("hasAuthority('ADMIN')")
 //    @PostMapping(value = "/add", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 //    public ResponseEntity<ApiResponse<Product>> saveProduct(
@@ -100,6 +99,12 @@ public class ProductController {
             @RequestHeader("Authorization") String authHeader
     ) throws Exception {
         return productService.getProductDetails(isSingleProductCheckout, productId, authHeader);
+    }
+
+    @GetMapping("/getCountProduct")
+    public ApiResponse<Long> countProducts(
+    ) throws Exception {
+        return productService.countProducts();
     }
 
 

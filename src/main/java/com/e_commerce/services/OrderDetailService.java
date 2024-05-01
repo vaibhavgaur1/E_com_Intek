@@ -23,4 +23,10 @@ public interface OrderDetailService {
     ApiResponse<List<Object>> getPdf(String orderId);
 
     void cancelOrder(Integer orderId);
+
+    ApiResponse<List<OrderDetail>> getStoreOrders(Long storeId);
+
+    ApiResponse<Long> countStoreOrders(Long storeId);
+
+    ApiResponse<List<OrderDetail>> getOrderDetailsOfUserByUserId(Integer userId);
 }

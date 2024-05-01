@@ -39,6 +39,15 @@ public class SuperAdminController {
         return ResponseEntity.ok(superAdminService.getAllActiveStores());
     }
 
+    @GetMapping("/active-stores-count")
+    public ResponseEntity<ApiResponse<?>> getAllActiveStoresCount(){
+        return ResponseEntity.ok(superAdminService.getAllActiveStoresCount());
+    }
+    @GetMapping("/stores-count")
+    public ResponseEntity<ApiResponse<?>> getAllStoresCount(){
+        return ResponseEntity.ok(superAdminService.getAllStoresCount());
+    }
+
     @GetMapping("/inactive-admins")
     public ResponseEntity<ApiResponse<?>> getAllInactiveAdmins(){
         return ResponseEntity.ok(superAdminService.getAllInactiveAdmins());
@@ -47,6 +56,16 @@ public class SuperAdminController {
     @GetMapping("/active-admins")
     public ResponseEntity<ApiResponse<?>> getAllActiveAdmins(){
         return ResponseEntity.ok(superAdminService.getAllActiveAdmins());
+    }
+
+    @GetMapping("/active-admins-count")
+    public ResponseEntity<ApiResponse<?>> getAllActiveAdminsCount(){
+        return ResponseEntity.ok(superAdminService.getAllActiveAdminsCount());
+    }
+
+    @GetMapping("/admins-count")
+    public ResponseEntity<ApiResponse<?>> getAllAdminsCount(){
+        return ResponseEntity.ok(superAdminService.getAllAdminsCount());
     }
 
     @GetMapping("/inactivate-store/{storeId}")

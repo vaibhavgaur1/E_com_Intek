@@ -28,4 +28,11 @@ public interface OrderDetailDao extends JpaRepository<OrderDetail, Integer> {
     @Query( "update OrderDetail u set u.pdfUrl = :pdfUrl where u.id = :id")
     int setPdfUrl(@Param("id") Integer id,
                          @Param("pdfUrl") String pdfUrl);
+
+    List<OrderDetail> findByStoreId(Long storeId);
+
+    @Query("SELECT COUNT(e) FROM OrderDetail e WHERE e.store.id = :value")
+    Long countByStoreId(@Param("value") Long storeId);
+
+    List<OrderDetail> findByUserId(Integer userId);
 }

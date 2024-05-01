@@ -19,6 +19,8 @@ public class OrderInput {
     private String selectedStore;
     private Double totalAmount;
 
+    private Long storeId;
+
     private List<OrderProductQuantity>  orderProductQuantityList;
     private String cardType;
 }

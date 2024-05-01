@@ -39,6 +39,7 @@ public class Product {
 
 //    @Lob
     private String image;
+    private Long availableStock;
 
 //    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    @JoinTable(

@@ -30,6 +30,10 @@ public class OrderDetail {
     @ManyToOne( fetch = FetchType.EAGER)
     private User user;
 
+    @ManyToOne
+
+    private Store store;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "orderDetail")
     @BatchSize(size = 40)
     private List<UserOrders> userOrders;

@@ -32,4 +32,9 @@ public interface StoreDao extends JpaRepository<Store, Long> {
     int enableStore(@Param("value") boolean value,
                      @Param("storeId") Long storeId
     );
+
+    @Query("SELECT COUNT(e) FROM Store e WHERE e.isActive = :value")
+    Long countByStatusActive(@Param("value") boolean value);
+
+
 }

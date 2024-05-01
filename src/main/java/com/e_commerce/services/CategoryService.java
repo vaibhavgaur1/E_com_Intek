@@ -15,4 +15,6 @@ public interface CategoryService {
     ApiResponse<List<String>> getAllCategoriesNamesOnly();
 
     ApiResponse<CategoryDto> updateCategory(CategoryDto categoryDto);
+
+    ApiResponse<Long> countCategories();
 }

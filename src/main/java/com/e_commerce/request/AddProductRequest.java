@@ -14,4 +14,5 @@ public class AddProductRequest {
     private Double productActualPrice;
     private Long categoryId;
     private String uploadId;
+    private Long availableStock;
 }

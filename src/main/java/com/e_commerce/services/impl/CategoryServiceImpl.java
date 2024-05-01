@@ -114,4 +114,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         return ResponseUtils.createSuccessResponse(categoryRepository.save(category).getDto(), new TypeReference<CategoryDto>() {});
     }
+
+    @Override
+    public ApiResponse<Long> countCategories() {
+
+        return ResponseUtils.createSuccessResponse(categoryRepository.count(),
+                new TypeReference<Long>() {});
+    }
 }

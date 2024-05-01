@@ -16,4 +16,5 @@ public class UpdateProductRequest {
     private String imageUrl;
     private String uploadId;
     private Long categoryId;
+    private Long availableStock;
 }

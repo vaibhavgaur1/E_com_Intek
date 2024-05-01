@@ -23,4 +23,12 @@ public interface SuperAdminService {
     ApiResponse<?> getAllActiveStores();
 
     ApiResponse<?> getAllActiveAdmins();
+
+    ApiResponse<?> getAllActiveStoresCount();
+
+    ApiResponse<?> getAllActiveAdminsCount();
+
+    ApiResponse<?> getAllStoresCount();
+
+    ApiResponse<?> getAllAdminsCount();
 }

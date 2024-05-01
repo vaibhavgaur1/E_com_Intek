@@ -41,7 +41,8 @@ public class ProductServiceImpl implements ProductService {
         return ResponseUtils.createSuccessResponse(productDao.save(product), new TypeReference<Product>() {});
     }
 
-    public ApiResponse<List<ProductResponse>> getAllProducts(String authHeader, String cardType, String searchKey) throws Exception
+    public ApiResponse<List<ProductResponse>> getAllProducts(String authHeader,
+                                                             String cardType, String searchKey) throws Exception
 //    Integer pageNumber, Integer pageSize, String searchKey
     {
         List<ProductResponse> response= new ArrayList<ProductResponse>();
@@ -72,6 +73,7 @@ public class ProductServiceImpl implements ProductService {
                 product.setImage(helperUtils.getCompleteImage()+dbFileUploadForProduct.get().getPathURL());
                 product.setWishList(wishFlag);
                 product.setUploadId(dbProduct.getUploadId());
+                product.setAvailableStock(dbProduct.getAvailableStock());
                 response.add(product);
             });
 
@@ -154,12 +156,15 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(productDto.getCategoryId())
                 .orElseThrow(() -> new Exception("category doesn't exists"));
 
+        if(productDto.getAvailableStock()<1){
+            throw new Exception("please ensure with at least 1 stock for product");
+        }
         Product productToSave = Product.builder()
                 .productName(productDto.getProductName())
                 .productDescription(productDto.getProductDescription())
                 .productDiscountedPrice(productDto.getProductDiscountedPrice())
                 .productActualPrice(productDto.getProductActualPrice())
-
+                .availableStock(productDto.getAvailableStock())
 //                .image(productDto.getImage())
 //                .productImages(productDto.getProductImages())
 
@@ -191,10 +196,14 @@ public class ProductServiceImpl implements ProductService {
         Product dbProduct = productDao.findById(req.getProductId())
                 .orElseThrow(() -> new RecordNotFoundException("product not present"));
 
+        if(req.getAvailableStock()<1){
+            throw new Exception("please ensure with at least 1 stock for product");
+        }
         dbProduct.setProductName(req.getProductName());
         dbProduct.setProductDescription(req.getProductDescription());
         dbProduct.setProductDiscountedPrice(req.getProductDiscountedPrice());
         dbProduct.setProductActualPrice(req.getProductActualPrice());
+        dbProduct.setAvailableStock(req.getAvailableStock());
 
         dbProduct.setUploadId(req.getUploadId());
         dbProduct.setCategory(category);
@@ -230,6 +239,7 @@ public class ProductServiceImpl implements ProductService {
                 product.setImage(helperUtils.getCompleteImage() + dbFileUploadForProduct.get().getPathURL());
                 product.setWishList(false);
                 product.setUploadId(dbProduct.getUploadId());
+                product.setAvailableStock(dbProduct.getAvailableStock());
                 response.add(product);
             });
 
@@ -264,6 +274,12 @@ public class ProductServiceImpl implements ProductService {
             return ResponseUtils.createSuccessResponse(response, new TypeReference<List<ProductResponse>>() {});
         }
 //        return null;
+    }
+
+    @Override
+    public ApiResponse<Long> countProducts() {
+        long count = productDao.count();
+        return ResponseUtils.createSuccessResponse(count, new TypeReference<Long>() { });
     }
 
 

@@ -39,4 +39,9 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<List<String>>> getAllCategoriesNamesOnly(){
         return ResponseEntity.ok(categoryService.getAllCategoriesNamesOnly());
     }
+
+    @GetMapping("/categories-count")
+    public ResponseEntity<ApiResponse<Long>> countCategories(){
+        return ResponseEntity.ok(categoryService.countCategories());
+    }
 }

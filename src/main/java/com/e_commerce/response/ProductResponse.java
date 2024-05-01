@@ -17,4 +17,5 @@ public class ProductResponse {
     private String image;
     private String uploadId;
     private Category category;
+    private Long availableStock;
 }
