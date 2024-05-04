@@ -1,6 +1,7 @@
 package com.e_commerce.entity;
 
 import com.e_commerce.Dto.AdminDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,10 @@ public class Admin implements UserDetails {
     private String password;
     private String contact;
     private boolean isActive;
+
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JsonIgnore
+//    private Store store;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinTable(

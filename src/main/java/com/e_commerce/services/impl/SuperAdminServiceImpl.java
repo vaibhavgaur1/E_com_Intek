@@ -1,11 +1,14 @@
 package com.e_commerce.services.impl;
 
 import com.e_commerce.Dto.AdminDto;
+import com.e_commerce.Dto.MessageInput;
 import com.e_commerce.Dto.StoreDto;
+import com.e_commerce._util.EmailService;
 import com.e_commerce._util.ResponseUtils;
 import com.e_commerce.dao.AdminDao;
 import com.e_commerce.dao.RoleDao;
 import com.e_commerce.dao.StoreDao;
+import com.e_commerce.dao.UserDao;
 import com.e_commerce.entity.Admin;
 import com.e_commerce.entity.Role;
 import com.e_commerce.entity.Store;
@@ -28,8 +31,10 @@ import java.util.Set;
 public class SuperAdminServiceImpl implements SuperAdminService {
     private final AdminDao adminDao;
     private final StoreDao storeDao;
+    private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private  final RoleDao roleDao;
+    private  final EmailService emailService;
 
     @SneakyThrows
     @Override
@@ -67,6 +72,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
 
         AdminDto savedAdmin = adminDao.save(admin).generateDto();
 
+        emailService.sendAdminCredentials(admin.getEmail(), adminDto.getEmail(), adminDto.getPassword());
 
         return ResponseUtils.createSuccessResponse(savedAdmin, new TypeReference<AdminDto>() {});
     }
@@ -88,7 +94,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                 .build();
 
         StoreDto savedStore = storeDao.save(store).generateDto();
-        adminDao.activateAdmin(dbAdmin.getId(), true);
+        adminDao.activeAdmin(dbAdmin.getId(), true);
 
         return ResponseUtils.createSuccessResponse(savedStore, new TypeReference<StoreDto>() {});
     }
@@ -194,5 +200,52 @@ public class SuperAdminServiceImpl implements SuperAdminService {
     @Override
     public ApiResponse<?> getAllAdminsCount() {
         return ResponseUtils.createSuccessResponse(adminDao.count(), new TypeReference<Long>() {});
+    }
+
+    @Override
+    public ApiResponse<?> getAllStores() {
+        return ResponseUtils.createSuccessResponse(storeDao.findAll(),
+                new TypeReference<List<Store>>() {});
+    }
+
+    @Override
+    public ApiResponse<?> getAllAdmins() {
+        return ResponseUtils.createSuccessResponse(adminDao.findAll(),
+                new TypeReference<List<Admin>>() {});
+    }
+
+    @Override
+    public ApiResponse<?> activateAdmin(Long adminId) {
+
+        Admin dbAdmin = adminDao.findById(adminId)
+                .orElseThrow(() -> new RecordNotFoundException("admin not present"));
+
+        int i = adminDao.activeAdmin(adminId, true);
+        String s = i == 0 ? "admin can not be activated" : "admin is activated";
+
+        return ResponseUtils.createSuccessResponse(s,
+                new TypeReference<String>() {
+});
+    }
+
+    @Override
+    public ApiResponse<?> deactivateAdmin(Long adminId) {
+        Admin dbAdmin = adminDao.findById(adminId)
+                .orElseThrow(() -> new RecordNotFoundException("admin not present"));
+
+        int i = adminDao.activeAdmin(adminId, false);
+        String s = i == 0 ? "admin can not be de-activated" : "admin is de-activated";
+
+        return ResponseUtils.createSuccessResponse(s,
+                new TypeReference<String>() {
+                });
+    }
+
+    @Override
+    public ApiResponse<?> publishMessage(MessageInput message) {
+
+        List<String> userEmailList = userDao.findAllUserEmail();
+        emailService.publishMessage(userEmailList, message.getMessage());
+        return null;
     }
 }

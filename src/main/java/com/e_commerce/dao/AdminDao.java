@@ -21,7 +21,7 @@ public interface AdminDao extends JpaRepository<Admin,Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Admin c SET c.isActive = :value where c.id = :adminId")
-    int activateAdmin(
+    int activeAdmin(
             @Param("adminId") Long adminId,
             @Param("value") boolean value
     );

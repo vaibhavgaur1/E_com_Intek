@@ -269,8 +269,6 @@ public class ProductServiceImpl implements ProductService {
 
             });
 
-
-
             return ResponseUtils.createSuccessResponse(response, new TypeReference<List<ProductResponse>>() {});
         }
 //        return null;

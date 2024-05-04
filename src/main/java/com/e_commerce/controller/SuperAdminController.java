@@ -1,6 +1,7 @@
 package com.e_commerce.controller;
 
 import com.e_commerce.Dto.AdminDto;
+import com.e_commerce.Dto.MessageInput;
 import com.e_commerce.Dto.StoreDto;
 import com.e_commerce.request.ChangeAdminRequest;
 import com.e_commerce.response.ApiResponse;
@@ -77,9 +78,35 @@ public class SuperAdminController {
         return ResponseEntity.ok(superAdminService.reActivateStore(storeId));
     }
 
-    @GetMapping("/change-admin/{storeId}")
+    @PostMapping("/change-admin")
     public ResponseEntity<ApiResponse<?>> changeAdmin(@RequestBody ChangeAdminRequest changeAdminRequest){
         return ResponseEntity.ok(superAdminService.changeAdmin(changeAdminRequest));
     }
+
+    @GetMapping("/admins")
+    public ResponseEntity<ApiResponse<?>> getAllAdmins(){
+        return ResponseEntity.ok(superAdminService.getAllAdmins());
+    }
+    @GetMapping("/stores")
+    public ResponseEntity<ApiResponse<?>> getAllStores(){
+        return ResponseEntity.ok(superAdminService.getAllStores());
+    }
+
+    @GetMapping("/activate-admin/{adminId}")
+    public ResponseEntity<ApiResponse<?>> activateAdmin(@PathVariable Long adminId){
+        return ResponseEntity.ok(superAdminService.activateAdmin(adminId));
+    }
+
+    @GetMapping("/deactivate-admin/{adminId}")
+    public ResponseEntity<ApiResponse<?>> deactivateAdmin(@PathVariable Long adminId){
+        return ResponseEntity.ok(superAdminService.deactivateAdmin(adminId));
+    }
+
+    @PostMapping("/publish-message")
+    public ResponseEntity<ApiResponse<?>> publishMessage(@RequestBody MessageInput message){
+        return ResponseEntity.ok(superAdminService.publishMessage(message));
+    }
+
+
 
 }

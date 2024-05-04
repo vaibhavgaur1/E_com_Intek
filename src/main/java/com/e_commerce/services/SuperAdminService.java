@@ -1,6 +1,7 @@
 package com.e_commerce.services;
 
 import com.e_commerce.Dto.AdminDto;
+import com.e_commerce.Dto.MessageInput;
 import com.e_commerce.Dto.StoreDto;
 import com.e_commerce.request.ChangeAdminRequest;
 import com.e_commerce.response.ApiResponse;
@@ -31,4 +32,14 @@ public interface SuperAdminService {
     ApiResponse<?> getAllStoresCount();
 
     ApiResponse<?> getAllAdminsCount();
+
+    ApiResponse<?> getAllStores();
+
+    ApiResponse<?> getAllAdmins();
+
+    ApiResponse<?> activateAdmin(Long adminId);
+
+    ApiResponse<?> deactivateAdmin(Long adminId);
+
+    ApiResponse<?> publishMessage(MessageInput message);
 }

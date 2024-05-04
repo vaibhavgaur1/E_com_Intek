@@ -36,4 +36,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
                             );
 
 
+//    @Query("SELECT  User c SET c.enabled = :value where c.id = :userId")
+    @Query(" SELECT DISTINCT(u.email) from User u")
+    List<String> findAllUserEmail();
 }
